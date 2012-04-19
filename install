@@ -1,0 +1,261 @@
+#!/bin/bash
+#
+# install - a simple installer for Eclipse in Debian/Ubuntu/Mint
+#
+#    Copyright (C) 2012 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/gpl.html>
+
+# ---------------------------------------------------------------
+# User-modifiable stuff...
+
+# App name in menus, Launchers, etc (inside .desktop file)
+name=Eclipse
+
+# executable (also affects dir, icon and .desktop file names)
+exec=eclipse
+
+# install prefix for system-wide install
+sysprefix=/opt
+
+# install prefix for user install
+userprefix=$HOME/.local/opt
+
+# install type: 1 for system-wide, 0 for user
+system=1
+
+# user (and group) name to own install dir and files in system-wide installs
+owner=eclipse # there's no point in changing this...
+
+url=http://www.eclipse.org/downloads/
+verbose=1
+
+# ---------------------------------------------------------------
+# Boring UI stuff...
+
+myname="${0##*/}"
+mydir=$(dirname "$(readlink -f "$0")")
+
+fatal()   { [[ "$1" ]] && echo "$myname: error: $1" >&2 ; exit ${2:-1} ; }
+invalid() { echo "$myname: invalid option: $1" >&2 ; usage 1 ; }
+missing() { echo "$myname: missing ${1:+$1 }operand" >&2 ; usage 1 ; }
+message() { ((verbose)) && echo "$1" ; }
+quit()    { message "Goodbye!" ; exit; }
+
+usage() {
+	cat <<- USAGE
+	Usage: $myname [options] [--|--tarball FILE]
+	USAGE
+	if [[ "$1" ]] ; then
+		cat >&2 <<- USAGE
+		Try '$myname --help' for more information.
+		USAGE
+		exit 1
+	fi
+	cat <<USAGE
+
+A simple installer for Eclipse in Debian/Ubuntu/Mint
+
+Options:
+-h|--help     - show this page.
+-v|--verbose  - print more details about what is being done.
+
+--system
+--user
+	choose system-wide or per-user install. Default is system
+
+--exec=NAME
+	executable name, also used as a prefix for for naming the
+	install directory, icon and .desktop files. Default "$exec"
+
+--prefix=DIR
+	parent of the install directory. Default is "$sysprefix"
+
+--name=NAME
+	friendly application name, for meny entries. Default "$name"
+
+--tarball FILE
+	the tar.gz install archive downloaded from Eclipse. If none is
+	provided, a menu will show currently downloaded files.
+
+Copyright (C) 2012 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
+License: GPLv3 or later. See <http://www.gnu.org/licenses/gpl.html>
+USAGE
+	exit 0
+}
+
+for arg in "$@"; do case "$arg" in -h|--help) usage ;; esac; done
+while (( $# )); do
+	case "$1" in
+	-h|--help     ) usage                        ;;
+	-v|--verbose  ) verbose=1                    ;;
+	--name=*      ) name="${1#*=}"               ;;
+	--exec=*      ) exec="${1#*=}"               ;;
+	--prefix=*    ) prefix="${1#*=}"             ;;
+	--tarball=*   ) tarball="${1#*=}"            ;;
+	--name        ) shift ; name="$1"            ;;
+	--exec        ) shift ; exec="$1"            ;;
+	--prefix      ) shift ; prefix="$1"          ;;
+	--tarball     ) shift ; tarball="$1"         ;;
+	--system      ) system=1                     ;;
+	--user        ) system=0                     ;;
+	--            ) shift ; tarball="$1"   break ;;
+	*             ) invalid "$1" ; shift ; break ;;
+	esac
+	shift
+done
+
+[[ "$name" ]] || missing "name"
+[[ "$exec" ]] || missing "exec"
+
+if (( system )) ; then
+	[[ "$prefix" ]] || prefix=$sysprefix
+	execdir=/usr/bin
+	icondir=/usr/share/pixmaps # Recommended for xpm files
+	appdir=/usr/share/applications
+	sudo=sudo
+	label="system"
+else
+	[[ "$prefix" ]] || prefix=$userprefix
+	execdir=$HOME/bin
+	icondir=$HOME/.local/share/icons/hicolor/48x48/apps # no pixmaps/ for user
+	appdir=$HOME/.local/share/applications
+	sudo=env
+	label="user"
+fi
+
+((verbose)) && v=v
+
+dir=${prefix}/${exec}
+
+# ---------------------------------------------------------------
+# Installer begins here (but still boring)
+
+((verbose)) && printf "\nECLIPSE INSTALLER\n\n"
+
+[[ "$tarball" ]] || {
+	cd "$mydir"
+
+	options=( *.tar.gz "Download more at $url" )
+
+	message "Available installs:"
+	PS3="Choose an install (0 to quit): "
+
+	select tarball in "${options[@]}"; do
+		((REPLY==${#options[@]})) && {
+			message "Opening your web browser..." ;
+			message "Choose your Eclipse flavor(s), download and save to"
+			message "$mydir"
+			message "... and run me again"
+			xdg-open "$url"
+			REPLY=0
+		}
+		((REPLY==0)) && quit
+		[[ "$tarball" ]] && break
+	done
+	echo ""
+}
+
+((verbose)) && {
+	echo "Install details:"
+	echo "App name    = $name"
+	echo "Executable  = $exec"
+	echo "Install dir = $dir"
+	echo "Source      = $tarball"
+	echo "System-wide = $system"
+	echo "To change these options, see $myname --help"
+	read -r -p "Confirm? (YES,no): " confirm
+	case "$confirm" in
+	[Nn]*) quit
+	esac
+	echo ""
+}
+
+#TODO: offer to uninstall and remove cruft from other installs
+# for both user and system, offer to delete ~/.eclipse
+read -r -p "Remove any previously ${label}-installed Eclipse? (yes,NO): " confirm
+case "$confirm" in
+[Yy]*)
+	message "removing cruft from all other Eclipse $label installs"
+	if (( system )); then
+		#sudo apt-get purge eclipse
+		sudo rm -rf {/opt,/etc,/usr{,/share,/local}{/bin,/lib,/applications,/pixmaps}}/eclipse37*
+	else
+		rm -rf "$HOME"/.{,local}{/opt,/bin,/share{/applications,/pixmaps}}/eclipse37*
+		#rm -rf "$HOME"/.eclipse
+	fi
+;;
+esac
+
+#TODO: if exec == eclipse, warn about overwriting (if system)
+#      or eclipsing (if user) current system install
+
+[[ -e "$dir" ]] && {
+	read -r -p "Install directory $dir already exists. Delete it before proceding? (yes,NO): " confirm
+	case "$confirm" in
+	[Yy]*) message "removing $dir" ;
+	       $sudo rm -rf "$dir" || fatal "could not remove $dir" ;;
+	    *) quit
+	esac
+}
+
+# ---------------------------------------------
+# Now the fun begins
+
+{ ((system)) && ! id "$owner" > /dev/null 2>&1 ; } && {
+	message "creating $owner user and group"
+	sudo useradd --system "$owner" ||
+		fatal "could not create user $owner"
+}
+
+$sudo mkdir -p${v} "$dir" ||
+	fatal "could not create install dir $dir"
+
+message "extracting $tarball to $dir"
+$sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
+	fatal "could not extract source $tarball in $dir"
+
+((system)) && {
+	message "adjusting ownership and permitions in $dir"
+	sudo chown -R "${owner}:" "$dir"        || fatal "could not set owner of $dir to $owner"
+	sudo chmod -R g+w "$dir"                || fatal "could not set permitions $dir to g+w"
+
+	message "including your user $USER to $owner group"
+	sudo usermod --groups "$owner" "$USER" || fatal "could not add $USER user to $owner group"
+}
+
+message "creating symlink to $dir/eclipse executable in $execdir/$exec"
+$sudo mkdir -p${v} "$execdir"               || fatal "could not create executable directory $execdir"
+$sudo ln -s "$dir/eclipse" "$execdir/$exec" || fatal "could not create symlink $execdir/$exec"
+
+message "copying icon to $icondir/$exec.xpm"
+$sudo mkdir -p${v} "$icondir"               || fatal "could not create icon directory $icondir"
+$sudo cp${v:+ -$v} "$dir/icon.xpm" "$icondir/$exec.xpm" || fatal "could not create icon $icondir/$exec"
+
+message "creating desktop file in $appdir/$exec.desktop"
+$sudo mkdir -p${v} "$appdir"                || fatal "could not create desktop directory $appdir"
+{ $sudo dd of="$appdir/$exec.desktop" status=noxfer 2>/dev/null ||
+  fatal "could not desktop entry $appdir/$exec.desktop" ; } <<-DESKTOP
+	[Desktop Entry]
+	Type=Application
+	Name=$name
+	Comment=Eclipse Integrated Development Environment
+	Icon=$exec
+	Exec=$exec
+	Terminal=false
+	Categories=Development;IDE;Java;
+DESKTOP
+
+message ""
+message "Done! Log out for changes to apply"
