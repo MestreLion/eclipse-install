@@ -26,6 +26,10 @@ name=Eclipse
 # executable (also affects dir, icon and .desktop file names)
 exec=eclipse
 
+# icon - Will be renamed according to exec, preserving extension
+icon=eclipse.png # default icon may be embedded or relative to install dir
+usericon=0 # leave at 0. if 1 user will be forced to choose an icon
+
 # install prefix for system-wide install
 sysprefix=/opt
 
@@ -104,10 +108,14 @@ while (( $# )); do
 	--exec=*      ) exec="${1#*=}"               ;;
 	--prefix=*    ) prefix="${1#*=}"             ;;
 	--tarball=*   ) tarball="${1#*=}"            ;;
+	--icon=*      ) argicon="${1#*=}"
+	                usericon=1                   ;;
 	--name        ) shift ; name="$1"            ;;
 	--exec        ) shift ; exec="$1"            ;;
 	--prefix      ) shift ; prefix="$1"          ;;
 	--tarball     ) shift ; tarball="$1"         ;;
+	--icon        ) shift ; argicon="$1"
+	                        usericon=1           ;;
 	--system      ) system=1                     ;;
 	--user        ) system=0                     ;;
 	--            ) shift ; tarball="$1"   break ;;
@@ -122,7 +130,7 @@ done
 if (( system )) ; then
 	[[ "$prefix" ]] || prefix=$sysprefix
 	execdir=/usr/bin
-	icondir=/usr/share/pixmaps # Recommended for xpm files
+	icondir=/usr/share/icons/hicolor/48x48/apps
 	appdir=/usr/share/applications
 	sudo=sudo
 	label="system"
@@ -239,9 +247,9 @@ message "creating symlink to $dir/eclipse executable in $execdir/$exec"
 $sudo mkdir -p${v} "$execdir"               || fatal "could not create executable directory $execdir"
 $sudo ln -s "$dir/eclipse" "$execdir/$exec" || fatal "could not create symlink $execdir/$exec"
 
-message "copying icon to $icondir/$exec.xpm"
+message "copying icon to $icondir/$exec.png"
 $sudo mkdir -p${v} "$icondir"               || fatal "could not create icon directory $icondir"
-$sudo cp${v:+ -$v} "$dir/icon.xpm" "$icondir/$exec.xpm" || fatal "could not create icon $icondir/$exec"
+copyicon "$icondir" "$exec"                 || fatal "could not create icon $icondir/$exec"
 
 message "creating desktop file in $appdir/$exec.desktop"
 $sudo mkdir -p${v} "$appdir"                || fatal "could not create desktop directory $appdir"
@@ -259,3 +267,44 @@ DESKTOP
 
 message ""
 message "Done! Log out for changes to apply"
+
+# Precedence order for icons:
+# if command-line option was used,
+# - argicon, if file exists
+# - argicon, if basename is found embedded
+# if command line option was not used,
+# - default icon, if basename is found embedded
+# - default icon, if file exists relative to install dir
+# if all the above fails, use icon.xpm inside the source archive
+# (this can be forced by user by setting argicon to a blank string)
+copyicon(){
+#	if ((usericon)) ; then
+#		[[ "$argicon" ]] || break
+#		[[ -f "$argicon" ]] && icon="$argicon" ; break
+#
+#
+#	else
+#		"$icondir/$exec.png"
+#	${sudo} dd if= of="$appdir/$exec.desktop" status=noxfer 2>/dev/null
+#|| of="$appdir/$exec.desktop" status=noxfer 2>/dev/null
+
+#$sudo dd if=<(icondata)
+#cp${v:+ -$v} <(decode "eclipse.png") "$icondir/$exec.png"
+
+
+#	argicon
+}
+
+# eclipse.png from debian's package. it looks MUCH better than eclipse's
+# original icon. And converting from PNG to XPM does not help much, since PNG
+# supports alpha transparency and XPM does not. So the PNG is uuencoded here
+decode(){
+local file="$1"
+shift
+case "$file" in
+"eclipse.png") uudecode "$@" <<-'EOF'
+EOF
+;;
+*) return 1 ;;
+esac
+}
