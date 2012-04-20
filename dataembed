@@ -19,6 +19,11 @@
 #
 # Edit shell scripts, embedding binary data files, base-64 encoded, wrapped
 # in a convenient, ready to use function
+#
+#TODO: --extract to extract all files from output using input files as filter
+#TODO: --delete{,-all}, to remove embedded files from output
+#TODO: --list, to list embedded files in output, printing name, mode and size
+#TODO: --add, to embed files while preserving existing ones (or update)
 
 myname="${0##*/}"
 mydir=$(dirname "$(readlink -f "$0")")
