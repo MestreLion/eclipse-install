@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# install - a simple installer for Eclipse in Debian/Ubuntu/Mint
+# install - an installer for Eclipse archives in Debian/Ubuntu/Mint
 #
 #    Copyright (C) 2012 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 #
@@ -37,7 +37,7 @@ sysprefix=/opt
 userprefix=$HOME/.local/opt
 
 # install type: 1 for system-wide, 0 for user
-system=1
+system=0
 
 # user (and group) name to own install dir and files in system-wide installs
 owner=eclipse # there's no point in changing this...
@@ -255,7 +255,6 @@ copyicon(){
 		if   [[ -f "$argicon" ]]; then
 			ext="${argicon##*.}"
 			cmd=('cat' "$argicon")
-
 		elif decode --find "$(basename "$argicon")"; then
 			ext="${argicon##*.}"
 			cmd=('decode' "$(basename "$argincon")")
@@ -264,16 +263,12 @@ copyicon(){
 		if   decode --find "$(basename "$icon")"; then
 			ext="${icon##*.}"
 			cmd=('decode' "$(basename "$icon")")
-
 		elif [[ -f "${mydir}/${icon}" ]]; then
 			ext="${icon##*.}"
 			cmd=('cat' "${mydir}/${icon}")
-
 		fi
 	fi
-
-	${sudo} dd if=<("${cmd[@]}") of="$icondir/$exec.$ext" \
-	status=noxfer 2>/dev/null
+	${sudo} dd of="$icondir/$exec.$ext" status=noxfer < <("${cmd[@]}") 2>/dev/null
 }
 
 
@@ -301,9 +296,10 @@ $sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
 	message "including your user $USER to $owner group"
 	sudo usermod --append --groups "$owner" "$USER" || fatal "could not add $USER user to $owner group"
 
-	message "installing man page to $manpage"
-	sudo dd if=<(decode "$(basename "$manpage")") \
-	        of="$manpage" status=noxfer 2>/dev/null
+	message "installing man page to $mandir"
+	sudo mkdir -p${v} "$(dirname "$mandir")"
+	sudo dd of="$mandir" status=noxfer < <(decode "$(basename "$mandir")") 2>/dev/null ||
+	fatal "could not install manpage to $mandir"
 }
 
 message "creating symlink to $dir/eclipse executable in $execdir/$exec"
