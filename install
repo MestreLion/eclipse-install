@@ -156,7 +156,9 @@ dir=${prefix}/${exec}
 [[ "$tarball" ]] || {
 
 	cd "$mydir"
+	shopt -s nullglob
 	options=( *.tar.gz "Download more at $url" )
+	shopt -u nullglob
 
 	message "Available installs:"
 	PS3="Choose an install (0 to quit): "
@@ -205,7 +207,7 @@ case "$confirm" in
 		rm -rf "$HOME"/.local{/opt,/bin,/share{/applications,/icons/hicolor/48x48/apps}}/eclipse*
 	fi
 	[[ -d "$HOME"/.eclipse ]] && {
-		read -r -p "Remove personal settings in ~/,eclipse? They won't be needed anymore. (yes,NO): " confirm
+		read -r -p "Remove personal settings in ~/.eclipse? They won't be needed anymore. (yes,NO): " confirm
 		case "$confirm" in
 		[Yy]*)
 			message "removing ~/.eclipse"
@@ -216,7 +218,7 @@ case "$confirm" in
 ;;
 esac
 
-#TODO: if exec == eclipse, warn about overwriting (if system)
+#TODO: if type eclipse, warn about overwriting (if system)
 #      or eclipsing (if user) current system install
 
 [[ -e "$dir" ]] && {
@@ -322,26 +324,33 @@ $sudo mkdir -p${v} "$appdir"                || fatal "could not create desktop d
 	Icon=$exec
 	Exec=$exec
 	Terminal=false
+	StartupNotify=true
 	Categories=Development;IDE;Java;
 DESKTOP
 
-((system)) || (
+((system)) || {
+	addpath=1
+	SAVED_IFS=$IFS
 	IFS=:
 	for pathdir in $PATH ; do
-		[[ "$pathdir" = "$execdir" ]] && return
+		[[ "$pathdir" == "$execdir" ]] && { addpath=0 ; break ; }
 	done
 
-	relexecdir=${execdir#$HOME/}
-	message "adding ~/${relexecdir} to you \$PATH in ~/.profile"
-	cat >> "$HOME/.profile" <<-EOF
+	((addpath)) && {
+		logout=1
+		relexecdir=${execdir#$HOME/}
+		message "adding ~/${relexecdir} to you \$PATH in ~/.profile"
+		cat >> "$HOME/.profile" <<-EOF
 
-	# Included by $name $label install
-	# set PATH so it includes user's ~/${relexecdir} if it exists
-	if [ -d "\$HOME/$relexecdir" ] ; then
-	    PATH="\$HOME/$relexecdir:\$PATH"
-	fi
-	EOF
-)
+		# Included by $name $label install
+		# set PATH so it includes user's ~/${relexecdir} if it exists
+		if [ -d "\$HOME/$relexecdir" ] ; then
+		    PATH="\$HOME/$relexecdir:\$PATH"
+		fi
+		EOF
+	}
+	IFS=$SAVED_IFS
+}
 
 message ""
 message "Done! Log out for changes to apply!"
