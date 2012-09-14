@@ -1,0 +1,40 @@
+This represents my personal configurations for Eclipse after install
+Using Linux Tools
+
+- Check for Updates (populates repository cache)
+
+- Install PyDev (marketplace)
+	http://pydev.org/updates
+
+- Install ShellEd (do NOT use marketplace! terribly outdated)
+	https://downloads.sourceforge.net/project/shelled/shelled/ShellEd%202.0.1/update
+
+- Window > Preferences
+	General
+		Appearance
+			Colors and Fonts
+				- "Text Editor Block": 12
+				- "Text Font": 12
+		Editors
+			Text Editors
+				- check "Show line numbers"
+				- check "Show print margin"
+				- check "Show whitespace characters"
+	Run/Debug
+		Launching
+			- "Always launch the previousl launched application"
+		"Always run previous"
+Pydev
+	Interactive Console
+		- check "Connect console to Variables debug view"
+	Interpreter - Python
+		- Auto Config
+		- Add "/usr/bin/python3"
+	Editor
+		Code Analysis
+			- Others > Ignore "Redefinition of builtin symbols"
+
+- Help > Install New Software
+	Available Software Sites - Enable Linux Tools
+	Install "PyDev" (marketplace or manual)
+	Install "Eclipse Java Development Tools" (Indigo Releases
