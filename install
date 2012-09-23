@@ -37,6 +37,7 @@ system=0
 
 # user (and group) name to own install dir and files in system-wide installs
 owner=eclipse # there's no point in changing this...
+creategroup=0 # if 0, do not create user or group
 
 # Default source for icon: tarball, embedded or user
 iconsource=tarball
@@ -108,6 +109,11 @@ Options:
 --user
 	choose system-wide or per-user install. Default is system
 
+--create-group
+    if system install, creates '$owner' user and group, instead of installing
+    Eclipse as root. Also adds current user to the newly-created group. This
+    won't be undone by uninstall
+
 --exec=NAME
 	executable name, also used as a prefix for naming the install directory,
 	icon and .desktop files. Default is "$exec"
@@ -171,6 +177,7 @@ while (( $# )); do
 	--embedded-icon  ) iconsource="embedded"        ;;
 	--extract-manual ) extractmanual=1              ;;
 	--extract-icon   ) extracticon=1                ;;
+	--create-group   ) creategroup=1                ;;
 	--system         ) system=1                     ;;
 	--user           ) system=0                     ;;
 	--               ) shift ; tarball="$1"   break ;;
@@ -321,19 +328,6 @@ config=".eclipse" # if system install, regardless of $exec
 	case "$confirm" in
 	[Yy]*) message "removing $dir" ;
 	       $sudo rm -rf "$dir" || fatal "could not remove $dir" ;;
-	    *) quit
-	esac
-}
-
-[[ -d "$HOME/$config" ]] && {
-	msg="Delete settings in $HOME/$config? "
-	msg+="They won't be needed anymore. (yes,NO): " confirm
-	read -r -p "$msg (yes,NO): " confirm
-	case "$confirm" in
-	[Yy]*)
-		message "removing $HOME/$config"
-		rm -rf "$HOME/$config"
-	;;
 	esac
 }
 
@@ -389,14 +383,17 @@ message "extracting $(basename "$tarball") to $dir"
 $sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
 	fatal "could not extract source $tarball in $dir"
 
-((system)) && {
-	message "adjusting ownership and permitions in $dir"
-	sudo chown -R "${owner}:" "$dir"        || fatal "could not set owner of $dir to $owner"
-	sudo chmod -R g+w "$dir"                || fatal "could not set permitions $dir to g+w"
+((system)) {
+    ((creategroup)) && {
+	    message "adjusting ownership and permitions in $dir"
+	    sudo chown -R "${owner}:" "$dir" || fatal "could not set owner of $dir to $owner"
+	    sudo chmod -R g+w "$dir"         || fatal "could not set permitions $dir to g+w"
 
-	message "including your user $USER to $owner group"
-	sudo usermod --append --groups "$owner" "$USER" || fatal "could not add $USER user to $owner group"
-
+	    message "including your user $USER to $owner group"
+	    sudo usermod --append --groups "$owner" "$USER" ||
+	        fatal "could not add $USER user to $owner group"
+		logout=1
+    }
 	message "installing man page to $mandir/$manpage"
 	sudo mkdir -p${v} "$mandir"
 	sudo dd of="$mandir/$manpage" status=noxfer < <(decode "$manpage") 2>/dev/null ||
