@@ -315,33 +315,9 @@ config=".eclipse" # if system install, regardless of $exec
 	echo ""
 }
 
-read -r -p "Remove any previously ${label}-installed Eclipse? (yes,NO): " confirm
-case "$confirm" in
-[Yy]*)
-	message "removing cruft from all other Eclipse $label installs"
-	if (( system )); then
-		#sudo apt-get purge eclipse
-		sudo rm -rf {/opt,/usr/local{/bin,/share{/applications,/icons/hicolor/48x48/apps,/man/man1}}}/eclipse*
-	else
-		rm -rf "$HOME"/.local{/opt,/bin,/share{/applications,/icons/hicolor/48x48/apps}}/eclipse*
-	fi
-	[[ -d "$HOME"/.eclipse ]] && {
-		read -r -p "Remove personal settings in ~/.eclipse? They won't be needed anymore. (yes,NO): " confirm
-		case "$confirm" in
-		[Yy]*)
-			message "removing ~/.eclipse"
-			rm -rf "$HOME"/.eclipse
-		;;
-		esac
-	}
-;;
-esac
-
-#TODO: if type eclipse, warn about overwriting (if system)
-#      or eclipsing (if user) current system install
-
 [[ -e "$dir" ]] && {
-	read -r -p "Install directory $dir already exists. Delete it before proceding? (yes,NO): " confirm
+	msg="Install directory $dir already exists. Delete it before proceding?"
+	read -r -p "$msg (yes,NO): " confirm
 	case "$confirm" in
 	[Yy]*) message "removing $dir" ;
 	       $sudo rm -rf "$dir" || fatal "could not remove $dir" ;;
