@@ -238,7 +238,7 @@ config=".eclipse" # if system install, regardless of $exec
 		$sudo update-desktop-database "$appdir"
 
 		message "removing icon"
-		for icon in "$dir"/bin/*.png ; do
+		for icon in "$dir"/bin/*.{png,xpm} ; do
 			size=${icon##*-}
 			size=${size%%.*}
 			$sudo xdg-icon-resource uninstall --noupdate \
@@ -246,29 +246,20 @@ config=".eclipse" # if system install, regardless of $exec
 		done
 		$sudo xdg-icon-resource forceupdate
 
+        (( system )) && {
+		    message "removing manual"
+		    $sudo rm -rf "$mandir/$manpage"
+        }
+
 		message "removing executable"
 		$sudo rm -rf "$execdir/$exec"
 
 		message "removing install dir"
 		$sudo rm -rf "$dir"
 
-
 		message "Successfully uninstalled $name"
 	;;
 	esac
-
-#read -r -p "Remove any previously ${label}-installed Eclipse? (yes,NO): " confirm
-#case "$confirm" in
-#[Yy]*)
-#	message "removing cruft from all other Eclipse $label installs"
-#	if (( system )); then
-#		#sudo apt-get purge eclipse
-#		sudo rm -rf {/opt,/usr/local{/bin,/share{/applications,/icons/hicolor/48x48/apps,/man/man1}}}/eclipse*
-#	else
-#		rm -rf "$HOME"/.local{/opt,/bin,/share{/applications,/icons/hicolor/48x48/apps}}/eclipse*
-#	fi
-#;;
-#esac
 
 	exit
 }
@@ -401,7 +392,8 @@ $sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
 }
 
 message "creating symlink to $dir/eclipse executable in $execdir/$exec"
-$sudo mkdir -p${v} "$execdir"               || fatal "could not create executable directory $execdir"
+$sudo mkdir -p${v} "$execdir" ||
+    fatal "could not create executable directory $execdir"
 $sudo rm -f "$execdir/$exec" && $sudo ln -s "$dir/eclipse" "$execdir/$exec" ||
 	fatal "could not create symlink $execdir/$exec"
 
