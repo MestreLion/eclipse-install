@@ -151,7 +151,7 @@ infiles+=( "$@" )
 (( ${#infiles[@]} )) || infiles=(-)
 
 # Source script check
-if [[ "$script" && "$script" != "-" ]]; then
+if [[ "$script" ]]; then
 	# source script, if provided, must be a valid file
 	[[ -f "$script" ]] || argerr "'$script' is not a valid file"
 else
@@ -277,10 +277,12 @@ EOF
 printheader(){
 	# Print until encoded block
 	#/^[[:blank:]]*#/ || /^[[:blank:]]*$/ {print;next}
-	awk -v funcstart="$funcstart" -v funcend="$funcend" \
-	    -v encoder="$encoder" -v header="$header" -v print=1 --lint '
-		$0 ~ encoder || $0 ~ header {exit} 1
-	' "$script"
+	[[ "$script" ]] && {
+		awk -v funcstart="$funcstart" -v funcend="$funcend" \
+		    -v encoder="$encoder" -v header="$header" -v print=1 --lint '
+			$0 ~ encoder || $0 ~ header {exit} 1
+		' "$script"
+	}
 	printfunc
 	echo "$header"
 	unregex "$encoder"
