@@ -42,22 +42,24 @@ creategroup=0 # if 0, do not create user or group
 # Default source for icon: tarball, embedded or user
 iconsource=tarball
 
-url=http://www.eclipse.org/downloads/
-verbose=1
-
 # Known files - do not edit unless embedded data or tarball icon does not match
 icon_embedded=eclipse-48.png 
 icon_tarball=icon.xpm
 manpage=eclipse.1.gz
+
+# Flags and etc...
+url=http://www.eclipse.org/downloads/
+verbose=1
+uninstall=0
+extractmanual=0
+extracticon=0
+size=0
 
 # ---------------------------------------------------------------
 # Boring UI stuff...
 
 myname="${0##*/}"
 mydir=$(dirname "$(readlink -f "$0")")
-extractmanual=0
-extracticon=0
-size=0
 
 fatal()   { [[ "$1" ]] && echo "$myname: error: $1" >&2 ; exit ${2:-1} ; }
 invalid() { echo "$myname: invalid option: $1" >&2 ; usage 1 ; }
