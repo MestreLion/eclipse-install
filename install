@@ -413,7 +413,7 @@ case "$iconsource" in
 		size=$(icon_size "$dir/$icon_tarball" "$size") ||
 			fatal "could not determine icon size. Use --icon-size=SIZE"
 		filetitle=${icon_tarball%.*}
-		fileext=${icon_tarball#"$filetitle"}
+		fileext=${icon_tarball#"$filetitle".}
 		icon="${dir}/${filetitle}-${size}.${fileext}"
 		$sudo mv "$dir/$icon_tarball" "$icon"
 	;;
@@ -421,7 +421,7 @@ case "$iconsource" in
 		size=$(icon_size "$dir/$icon" "$size") ||
 			fatal "could not determine icon size. Use --icon-size=SIZE"
 		filetitle=${icon%.*}
-		fileext=${icon#"$filetitle"}
+		fileext=${icon#"$filetitle".}
 		newicon="${filetitle}-${size}.${fileext}"
 		$sudo cp "$icon" "$dir/$newicon"
 		icon=$newicon
