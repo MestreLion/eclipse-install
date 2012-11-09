@@ -182,6 +182,7 @@ while (( $# )); do
 	--create-group   ) creategroup=1                ;;
 	--system         ) system=1                     ;;
 	--user           ) system=0                     ;;
+	--uninstall      ) uninstall=1                  ;;
 	--               ) shift ; tarball="$1"   break ;;
 	*                ) invalid "$1" ; shift ; break ;;
 	esac
