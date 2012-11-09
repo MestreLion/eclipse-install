@@ -6,6 +6,12 @@ Using Linux Tools
 - Install PyDev (marketplace)
 	http://pydev.org/updates
 
+- Install CDT
+	 http://download.eclipse.org/tools/cdt/releases/juno
+
+- Install LinuxTools
+	http://download.eclipse.org/linuxtools/update
+
 - Install ShellEd (do NOT use marketplace! terribly outdated)
 	https://downloads.sourceforge.net/project/shelled/shelled/ShellEd%202.0.1/update
 
