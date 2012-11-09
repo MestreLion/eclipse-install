@@ -246,10 +246,10 @@ config=".eclipse" # if system install, regardless of $exec
 		done
 		$sudo xdg-icon-resource forceupdate
 
-        (( system )) && {
-		    message "removing manual"
-		    $sudo rm -rf "$mandir/$manpage"
-        }
+		(( system )) && {
+			message "removing manual"
+			$sudo rm -rf "$mandir/$manpage"
+		}
 
 		message "removing executable"
 		$sudo rm -rf "$execdir/$exec"
@@ -374,17 +374,17 @@ message "extracting $(basename "$tarball") to $dir"
 $sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
 	fatal "could not extract source $tarball in $dir"
 
-((system)) {
-    ((creategroup)) && {
-	    message "adjusting ownership and permitions in $dir"
-	    sudo chown -R "${owner}:" "$dir" || fatal "could not set owner of $dir to $owner"
-	    sudo chmod -R g+w "$dir"         || fatal "could not set permitions $dir to g+w"
+((system)) && {
+	((creategroup)) && {
+		message "adjusting ownership and permitions in $dir"
+		sudo chown -R "${owner}:" "$dir" || fatal "could not set owner of $dir to $owner"
+		sudo chmod -R g+w "$dir"         || fatal "could not set permitions $dir to g+w"
 
-	    message "including your user $USER to $owner group"
-	    sudo usermod --append --groups "$owner" "$USER" ||
-	        fatal "could not add $USER user to $owner group"
+		message "including your user $USER to $owner group"
+		sudo usermod --append --groups "$owner" "$USER" ||
+			fatal "could not add $USER user to $owner group"
 		logout=1
-    }
+	}
 	message "installing man page to $mandir/$manpage"
 	sudo mkdir -p${v} "$mandir"
 	sudo dd of="$mandir/$manpage" status=noxfer < <(decode "$manpage") 2>/dev/null ||
