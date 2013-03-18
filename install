@@ -183,7 +183,7 @@ while (( $# )); do
 	--system         ) system=1                     ;;
 	--user           ) system=0                     ;;
 	--uninstall      ) uninstall=1                  ;;
-	--               ) shift ; tarball="$1"   break ;;
+	--               ) shift ; tarball="$1" ; break ;;
 	*                ) invalid "$1" ; shift ; break ;;
 	esac
 	shift
@@ -432,7 +432,7 @@ $sudo xdg-icon-resource install --novendor --size "$size" "$icon" "$exec" ||
 message "creating desktop file in $appdir/$exec.desktop"
 $sudo mkdir -p${v} "$appdir" || fatal "could not create desktop directory $appdir"
 { $sudo dd of="$appdir/$exec.desktop" status=noxfer 2>/dev/null ||
-  fatal "could not desktop entry $appdir/$exec.desktop" ; } <<-DESKTOP
+  fatal "could not create desktop entry $appdir/$exec.desktop" ; } <<-DESKTOP
 	[Desktop Entry]
 	Version=1.0
 	Type=Application
@@ -456,7 +456,7 @@ DESKTOP
 	((addpath)) && {
 		logout=1
 		relexecdir=${execdir#$HOME/}
-		message "adding ~/${relexecdir} to you \$PATH in ~/.profile"
+		message "adding ~/${relexecdir} to your \$PATH in ~/.profile"
 		cat >> "$HOME/.profile" <<-EOF
 
 		# Included by $name $label install
