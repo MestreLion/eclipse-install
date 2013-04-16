@@ -30,7 +30,7 @@ exec=eclipse
 sysprefix=/opt
 
 # install prefix for user install
-userprefix=${XDG_DATA_HOME:-"$HOME"/.local}/opt
+userprefix="$HOME"/.local/opt
 
 # install type: 1 for system-wide, 0 for user
 system=0
@@ -217,7 +217,7 @@ if (( system )) ; then
 else
 	[[ "$prefix" ]] || prefix=$userprefix
 	execdir=$HOME/.local/bin
-	appdir=$HOME/.local/share/applications
+	appdir=${XDG_DATA_HOME:-"$HOME"/.local/share}/applications
 	sudo=env
 	label="user"
 fi
