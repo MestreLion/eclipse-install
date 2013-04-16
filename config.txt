@@ -44,3 +44,6 @@ Pydev
 	Available Software Sites - Enable Linux Tools
 	Install "PyDev" (marketplace or manual)
 	Install "Eclipse Java Development Tools" (Indigo Releases
+
+- Tooltips and autocompletion colors:
+	http://weblog.avp-ptr.de/20120728/how-to-fix-eclipse-colors-for-autocompletion-and-tooltips/
