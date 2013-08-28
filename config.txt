@@ -47,3 +47,23 @@ Pydev
 
 - Tooltips and autocompletion colors:
 	http://weblog.avp-ptr.de/20120728/how-to-fix-eclipse-colors-for-autocompletion-and-tooltips/
+	(or use Gnome Color Chooser from repos)
+	~/.gtkrc-2.0
+		style "eclipse-tooltips"
+		{
+		  bg[NORMAL] = "#FFFFAF"
+		  fg[NORMAL] = "#000000"
+		}
+		widget "gtk-tooltip*" style "eclipse-tooltips"
+
+		style "eclipse-autocompletion"
+		{
+		  base[ACTIVE] = shade (0.54, @bg_color)
+		}
+		widget "GtkTreeView" style "eclipse-autocompletion"
+	- Or paste in a "~/eclipse-colors" file and:
+		in ~/.gtkrc-2.0 : include "eclipse-colors"
+		at run-time: env GTK2_RC_FILES=~/eclipse-colors eclipse
+	- Autocompletion may be fixed from within Eclipse
+		Window -> Preferences > General -> Appearance
+			Uncheck "Use mixed fonts and colours for labels"
