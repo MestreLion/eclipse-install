@@ -185,7 +185,9 @@ while (( $# )); do
 	--user           ) system=0                     ;;
 	--uninstall      ) uninstall=1                  ;;
 	--               ) shift ; tarball="$1" ; break ;;
-	*                ) invalid "$1" ; shift ; break ;;
+	-*               ) invalid "$1"                 ;;
+	*                ) [[ "$tarball" ]] && invalid "$1"
+	                   tarball="$1"                 ;;
 	esac
 	shift
 done
