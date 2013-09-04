@@ -34,6 +34,7 @@ userprefix="$HOME"/.local/opt
 
 # install type: 1 for system-wide, 0 for user
 system=0
+label=user  # default label, used in --help
 
 # user (and group) name to own install dir and files in system-wide installs
 owner=eclipse # there's no point in changing this...
@@ -97,9 +98,9 @@ Allows system-wide or per-user install, and also coexistence of multiple
 versions. Extracts original tarball and properly creates desktop file, icon,
 executable and, if system install, man page.
 
-Also, for system install, creates "$owner" user and group and add current user
-to group. This allows plugins and software updates to be installed by the user,
-and be available to all users.
+Also, for system install, can create "$owner" user and group and add the current
+user to that group. This allows plugins and software updates to be installed by
+authorized users only but be available to all users.
 
 Tested with Eclipse 3.5, 3.6, 3.7 and 4.2
 
@@ -109,7 +110,7 @@ Options:
 
 --system
 --user
-	choose system-wide or per-user install. Default is system
+	choose system-wide or per-user install. Default is user
 
 --create-group
     if system install, creates '$owner' user and group, instead of installing
