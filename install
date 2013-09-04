@@ -423,13 +423,13 @@ case "$iconsource" in
 		$sudo mv "$dir/$icon_tarball" "$icon"
 	;;
 	user)
-		size=$(icon_size "$dir/$icon" "$size") ||
+		size=$(icon_size "$icon" "$size" 2>/dev/null) ||
 			fatal "could not determine icon size. Use --icon-size=SIZE"
 		filetitle=${icon%.*}
 		fileext=${icon#"$filetitle".}
-		newicon="${filetitle}-${size}.${fileext}"
+		newicon="${filetitle##*/}-${size}.${fileext}"
 		$sudo cp "$icon" "$dir/$newicon"
-		icon=$newicon
+		icon="$dir/$newicon"
 esac
 $sudo xdg-icon-resource install --novendor --size "$size" "$icon" "$exec" ||
 	fatal "could not install icon"
