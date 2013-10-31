@@ -1,6 +1,10 @@
 This represents my personal configurations for Eclipse after install
 Using Linux Tools
 
+- install with:
+	./install --custom-icon icons/eclipse-256.xpm FILE
+	./install --embedded-icon FILE
+
 - Check for Updates (populates repository cache)
 
 - Install PyDev (marketplace)
