@@ -203,7 +203,7 @@ done
 [[ "$exec" ]] || missing "exec"
 
 case "$iconsource" in
-	embedded ) icon="$dir/$icon_embedded" ;;
+	embedded ) icon="$icon_embedded" ;;
 	tarball  ) icon="$icon_tarball"  ;;
 	user     ) [[ "$icon" ]]    || missing "custom-icon"
 	           [[ -f "$icon" ]] ||
@@ -408,11 +408,12 @@ $sudo rm -f "$execdir/$exec" && $sudo ln -s "$dir/eclipse" "$execdir/$exec" ||
 message "installing icon"
 case "$iconsource" in
 	embedded)
-		$sudo dd of="$dir/$icon" status=noxfer < <(decode "$icon") \
-			2>/dev/null || fatal "could not extract embedded icon"
-		icon="$dir/$icon_embedded"
-		size=${icon##*-}
+		size=${icon_embedded##*-}  # assumes "name-size.ext" format
 		size=${size%%.*}
+		fileext=${icon_embedded##*.}
+		icon="${dir}/${exec}-${size}.${fileext}"
+		$sudo dd of="$icon" status=noxfer < <(decode "$icon_embedded") \
+			2>/dev/null || fatal "could not extract embedded icon"
 	;;
 	tarball)
 		size=$(icon_size "$dir/$icon_tarball" "$size") ||
