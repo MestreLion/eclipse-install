@@ -246,7 +246,7 @@ config=".eclipse" # if system install, regardless of $exec
 		$sudo update-desktop-database "$appdir"
 
 		message "removing icon"
-		for icon in "$dir"/bin/*.{png,xpm} ; do
+		for icon in "$dir"/"$exec"-*.{png,xpm} ; do
 			size=${icon##*-}
 			size=${size%%.*}
 			$sudo xdg-icon-resource uninstall --noupdate \
@@ -417,15 +417,15 @@ case "$iconsource" in
 	;;
 	tarball)
 		size=$(icon_size "$dir/$icon_tarball" "$size") ||
-			fatal "could not determine icon size. Use --icon-size=SIZE"
+			fatal "could not determine icon size.\nUse --icon-size=SIZE or install 'imagemagik' package"
 		filetitle=${icon_tarball%.*}
 		fileext=${icon_tarball#"$filetitle".}
-		icon="${dir}/${filetitle}-${size}.${fileext}"
-		$sudo mv "$dir/$icon_tarball" "$icon"
+		icon="${dir}/${exec}-${size}.${fileext}"
+		$sudo mv "$dir/$icon_tarball" "$icon"  # assumes they are not the same
 	;;
 	user)
 		size=$(icon_size "$icon" "$size" 2>/dev/null) ||
-			fatal "could not determine icon size. Use --icon-size=SIZE"
+			fatal "could not determine icon size.\nUse --icon-size=SIZE or install 'imagemagik' package"
 		filetitle=${icon%.*}
 		fileext=${icon#"$filetitle".}
 		newicon="${filetitle##*/}-${size}.${fileext}"
