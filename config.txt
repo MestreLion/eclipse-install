@@ -40,6 +40,7 @@ Pydev
 	Interpreter - Python
 		- Auto Config
 		- Add "/usr/bin/python3"
+		- Add "gi" in "Forced Builtins" to allow debug of Gtk/Gio/Glib-etc
 	Editor
 		Code Analysis
 			- Others > Ignore "Redefinition of builtin symbols"
@@ -71,3 +72,4 @@ Pydev
 	- Autocompletion may be fixed from within Eclipse
 		Window -> Preferences > General -> Appearance
 			Uncheck "Use mixed fonts and colours for labels"
+			restart eclipse
