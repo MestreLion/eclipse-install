@@ -262,7 +262,7 @@ decode(){
     # Feel free to move this function to a more convenient location,
     # and also to remove the comments. Closing } must be on a line of its own
     # This function will only be re-created if deleted
-    local s f;while((\$#));do case "\$1" in --find)s=1;; *)f=\$1;;esac;shift;done
+    local s= f;while((\$#));do case "\$1" in --find)s=1;;*)f=\$1;;esac;shift;done
     if d=\$(awk -v f="\$f" -v p=0 -v e=0 -v s=\$s 'p&&/${dataend}/{exit}p{print;next
     } e&&/${datastart}/{getline;if(\$0==f){p=1;if(s)exit}} /${encoder}/{e=1} END{
     exit !p}' "\$(readlink -f "\$0")");then base64 -d <<<"\$d"; else return 1; fi
