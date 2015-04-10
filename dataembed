@@ -22,7 +22,6 @@
 #
 #TODO: --extract to extract all files from output using input files as filter
 #TODO: --delete{,-all}, to remove embedded files from output
-#TODO: --list, to list embedded files in output, printing name, mode and size
 #TODO: --add, to embed files while preserving existing ones (or update)
 
 myname="${0##*/}"
@@ -81,6 +80,9 @@ Options:
 
   INPUTFILE...     The data file(s) to embed. If no file, reads from standard
                    input. Default is "${infiles[@]}"
+
+Experimental options:
+  --list           List all embedded files and their sizes
 
 Output format:
 
