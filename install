@@ -102,7 +102,7 @@ Also, for system install, can create "$owner" user and group and add the current
 user to that group. This allows plugins and software updates to be installed by
 authorized users only but be available to all users.
 
-Tested with Eclipse 3.5, 3.6, 3.7 and 4.2
+Tested with Eclipse 3.5, 3.6, 3.7, 4.2, 4.5 and 4.7
 
 Options:
 -h|--help  - show this page.
