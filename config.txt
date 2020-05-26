@@ -2,8 +2,14 @@ This represents my personal configurations for Eclipse after install
 Using Linux Tools
 
 - install with:
-	./install --custom-icon icons/eclipse-256.xpm FILE
-	./install --embedded-icon FILE
+	./install --exec 'eclipse-2020-03'      --name 'Eclipse 2020-03'     --custom-icon icons/eclipse-necromod.png
+	./install --exec 'eclipse-2020-03'
+
+- For Java EE:
+	./install --exec 'eclipse-jee-2020-03'  --name 'Eclipse JEE 2020-03' --custom-icon icons/tarball/org.eclipse.epp.package.jee/javaee-ide_x48.png
+
+TERRIBLY OUTDATED!
+==================
 
 - Check for Updates (populates repository cache)
 
@@ -18,6 +24,9 @@ Using Linux Tools
 
 - Install ShellEd (do NOT use marketplace! terribly outdated)
 	https://downloads.sourceforge.net/project/shelled/shelled/ShellEd%202.0.1/update
+
+- JSON Tools (works nice, reviews says it's better than JSON Editor)
+	- marketplace -> JSON Tools
 
 - Window > Preferences
 	General
