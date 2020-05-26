@@ -132,17 +132,20 @@ invalid() { argerr "invalid option: $1" ; }
 for arg in "$@"; do case "$arg" in -h|--help) usage ;; esac; done
 while (( $# )); do
 	case "$1" in
-	-v|--verbose  ) verbose=1         ;;
+	-v|--verbose  ) verbose=1 ;;
 	-i|--in-place ) inplace=1 ;;
-	--no-backup   ) backup=0          ;;
+	--no-backup   ) backup=0  ;;
+	--list        ) list=1    ;;
+	--update      ) update=1  ;;
+	--delete      ) delete=1  ;;
+	--purge       ) purge=1   ;;
 	--suffix=*    ) suffix="${1#*=}"  ;;
 	--function=*  ) function="${1#*=}";;
-	--script=*    ) script="${1#*=}" ;;
-	--list        ) list=1            ;;
-	--update      ) update=1 ;;
-	--delete      ) delete=1 ;;
-	--purge       ) purge=1 ;;
-	-             ) infiles+=( - ) ;;
+	--script=*    ) script="${1#*=}"  ;;
+	--suffix      ) shift; suffix="${1:-}"   ;;
+	--function    ) shift; function="${1:-}" ;;
+	--script      ) shift; script="${1:-}"   ;;
+	-             ) infiles+=( - )    ;;
 	--            ) shift ; break     ;;
 	-*            ) invalid "$1"      ;;
 	*             ) infiles+=( "$1" ) ;;
