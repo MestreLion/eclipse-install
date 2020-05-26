@@ -113,9 +113,9 @@ Options:
 	choose system-wide or per-user install. Default is user
 
 --create-group
-    if system install, creates '$owner' user and group, instead of installing
-    Eclipse as root. Also adds current user to the newly-created group. This
-    won't be undone by uninstall
+	if system install, creates '$owner' user and group, instead of installing
+	Eclipse as root. Also adds current user to the newly-created group. This
+	won't be undone by uninstall
 
 --exec=NAME
 	executable name, also used as a prefix for naming the install directory,
@@ -207,7 +207,7 @@ case "$iconsource" in
 	tarball  ) icon="$icon_tarball"  ;;
 	user     ) [[ "$icon" ]]    || missing "custom-icon"
 	           [[ -f "$icon" ]] ||
-			fatal "custom icon file '$icon' not found" ;;
+	               fatal "custom icon file '$icon' not found" ;;
 esac
 
 if (( system )) ; then
@@ -401,7 +401,7 @@ $sudo tar -xzf "$tarball" --strip-components=1 --directory "$dir" ||
 
 message "creating symlink to $dir/eclipse executable in $execdir/$exec"
 $sudo mkdir -p${v} "$execdir" ||
-    fatal "could not create executable directory $execdir"
+	fatal "could not create executable directory $execdir"
 $sudo rm -f "$execdir/$exec" && $sudo ln -s "$dir/eclipse" "$execdir/$exec" ||
 	fatal "could not create symlink $execdir/$exec"
 
