@@ -189,10 +189,13 @@ dataend="^${token}\$"
 
 
 # easy stuff first... the only read-only command
-((list)) && {
+if ((list)); then
+	while read pad bytes name; do
+		printf "%'*d %s\n" $pad $bytes "$name"
+	done < <(
 	awk -v datastart="$datastart" -v dataend="$dataend" \
 	    -v encoder="$encoder" '
-		BEGIN { data=0; encoding=0 }
+		BEGIN { data=0; encoding=0; max=0; }
 		data && $0 ~ dataend {
 			bytes[file] = chars*3/4 - gsub("=", "=", last)
 			max = (bytes[file] > max) ? bytes[file] : max
@@ -211,11 +214,11 @@ dataend="^${token}\$"
 		END {
 			pad = length(max"") + int(log(max)/3)
 			for (i=1;i<=file;i++)
-				printf "%'\''*d %s\n", pad, bytes[i], name[i]
+				print(pad, bytes[i], name[i])
 		}
-	' "$script"
+	' "$script")
 	exit
-}
+fi
 
 # all other commands may write to script, so...
 if ((inplace)) ; then
