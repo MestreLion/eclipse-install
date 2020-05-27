@@ -448,7 +448,7 @@ $sudo mkdir -p${v} "$appdir" || fatal "could not create desktop directory $appdi
 	Exec=$exec
 	Terminal=false
 	StartupNotify=true
-	StartupWMClass=$exec
+	StartupWMClass=Eclipse
 	Categories=Development;IDE;Java;
 DESKTOP
 
