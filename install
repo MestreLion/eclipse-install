@@ -478,7 +478,7 @@ DESKTOP
 
 message ""
 message "Succesfully installed ${name}!"
-((logout)) && echo "Log out for changes to apply..."
+if ((logout)); then echo "Log out for changes to apply..."; fi
 
 
 # eclipse.png from debian's package. it looks MUCH better than eclipse's
