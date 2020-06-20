@@ -129,8 +129,9 @@ Options:
 
 --tarball-icon
 --embedded-icon
-	Use either the embedded icon in install file (recommended for
-	eclipse 3.x) or the icon inside the tarball archive (for eclipse 4.x).
+	Use either the icon inside the tarball archive (recommended for eclipse
+	versions 3.8 and 4.2) or the embedded icon in this install file (for all
+	other eclipse versions).
 	Default is to use the $iconsource icon.
 
 --custom-icon=FILE [--icon-size=SIZE]
