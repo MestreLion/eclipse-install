@@ -1,12 +1,22 @@
 This represents my personal configurations for Eclipse after install
-Using Linux Tools
+
+version=2020-03
 
 - install with:
-	./install --exec 'eclipse-2020-03'      --name 'Eclipse 2020-03'     --custom-icon icons/eclipse-necromod.png
-	./install --exec 'eclipse-2020-03'
+	./install --exec "eclipse-${version}" --name "Eclipse ${version}" --custom-icon icons/tarball/org.eclipse.platform_3.8.2/eclipse256.png
+	./install --exec "eclipse-${version}"
 
 - For Java EE:
-	./install --exec 'eclipse-jee-2020-03'  --name 'Eclipse JEE 2020-03' --custom-icon icons/tarball/org.eclipse.epp.package.jee/javaee-ide_x48.png
+	./install --exec "eclipse-jee-${version}"  --name "Eclipse JEE ${version}" --custom-icon icons/tarball/org.eclipse.epp.package.jee/javaee-ide_x48.png
+
+- Create symlinks for "official" Eclipse
+	desktop=${XDG_DATA_HOME:-$HOME/.local/share}/applications/eclipse-"${version}".desktop
+	exec=$HOME/.local/bin/eclipse
+	rm -f "$exec"; ln -s eclipse-"${version}" "$exec"
+	if ! grep -qi 'OnlyShowIn'; do echo -e '\nOnlyShowIn=NONE;' >> "$desktop"; done
+	xdg-icon-resource install --novendor --size 512 icons/eclipse-necromod.png eclipse  # only once!
+	xdg-desktop-menu  install --novendor data/eclipse.desktop                           # only once!
+
 
 TERRIBLY OUTDATED!
 ==================

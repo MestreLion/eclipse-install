@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Eclipse
+Comment=Eclipse Integrated Development Environment
+Icon=eclipse
+Exec=eclipse
+Terminal=false
+StartupNotify=true
+StartupWMClass=Eclipse
+Categories=Development;IDE;Java;
